@@ -69,6 +69,10 @@ func (b *writeBuf) string(s string) {
 	b.buf = append(b.buf, (s + "\000")...)
 }
 
+func (b *writeBuf) kstring(s string) {
+	b.buf = append(b.buf, s...)
+}
+
 func (b *writeBuf) byte(c byte) {
 	b.buf = append(b.buf, c)
 }
