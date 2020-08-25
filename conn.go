@@ -1038,6 +1038,11 @@ func (cn *conn) ssl(o values) error {
 	}
 
 	if b[0] != 'S' {
+		// Server doesn't support SSL.
+		// If sslmode is not specified, just use plaintext.
+		if o["sslmode"] == "" {
+			return nil
+		}
 		return ErrSSLNotSupported
 	}
 
