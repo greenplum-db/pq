@@ -893,8 +893,21 @@ func (cn *conn) Exec(query string, args []driver.Value) (res driver.Result, err 
 	return r, err
 }
 
+type safeRetryError struct {
+	Err error
+}
+
+func (se *safeRetryError) Error() string {
+	return se.Err.Error()
+}
+
 func (cn *conn) send(m *writeBuf) {
-	_, err := cn.c.Write(m.wrap())
+	n, err := cn.c.Write(m.wrap())
+	if err != nil {
+		if n == 0 {
+			err = &safeRetryError{Err: err}
+		}
+	}
 	if err != nil {
 		panic(err)
 	}
